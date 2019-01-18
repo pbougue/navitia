@@ -444,6 +444,46 @@ void DisruptionHolder::forget_vj(const VehicleJourney* vj) {
     }
 }
 
+namespace detail {
+
+const StopTime* AuxInfoForMetaVJ::get_vj_stop_time(const StopTimeUpdate& stu) const {
+    auto* vj = stu.stop_time.vehicle_journey;
+    auto log = log4cplus::Logger::getInstance("log");
+    if (! vj) {
+        LOG4CPLUS_WARN(log, "impossible to find corresponding StopTime "
+                            "since the StopTimeUpdate is not yet associated to a VJ");
+        return nullptr;
+    }
+
+    size_t idx = 0;
+    for (const auto& stop_update: stop_times) {
+        if (&stop_update == &stu) {
+            break;
+        }
+        idx++;
+    }
+
+    if (idx >= stop_times.size()) {
+        LOG4CPLUS_WARN(log, "StopTimeUpdate list is not consistent as it doesn't contain given StopTimeUpdate");
+        return nullptr;
+    }
+
+    if (idx >= vj->stop_time_list.size()) {
+        LOG4CPLUS_WARN(log, "The StopTime list of associated VJ " << vj->meta_vj->uri <<
+                            " is not consistent with the list of StopTimeUpdate");
+        return nullptr;
+    }
+
+    const auto& vj_st = vj->stop_time_list[idx];
+    if (stu.stop_time.stop_point != vj_st.stop_point) {
+        LOG4CPLUS_WARN(log, "The StopTime list of of associated VJ " << vj->meta_vj->uri <<
+                            " is not consistent with the list of StopTimeUpdate, StopPoints are different");
+        return nullptr;
+    }
+    return &vj_st;
+}
+
+} // namespace detail
 } // namespace discruption
 } // namespace type
 } // namespace navitia

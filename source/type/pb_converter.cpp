@@ -133,9 +133,12 @@ struct PbCreator::Filler::PtObjVisitor: public boost::static_visitor<> {
                                                            impacted_stop->mutable_amended_stop_time());
 
             // we need to get the base stoptime
-            const auto* base_st = stu.stop_time.get_base_stop_time();
-            if (base_st) {
-                filler.copy(0, DumpMessage::No).fill_pb_object(base_st, impacted_stop->mutable_base_stop_time());
+            const auto* vj_st = impact.aux_info.get_vj_stop_time(stu);
+            if (vj_st) {
+                const auto* base_st = vj_st->get_base_stop_time();
+                if (base_st) {
+                    filler.copy(0, DumpMessage::No).fill_pb_object(base_st, impacted_stop->mutable_base_stop_time());
+                }
             }
         }
     }
