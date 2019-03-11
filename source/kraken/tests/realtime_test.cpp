@@ -2762,6 +2762,12 @@ struct AddTripDataset {
                      ("stop_point:C", "09:00"_t)
                      ("stop_point:D", "09:30"_t);
 
+        b.vj("2").uri("vj:2")
+                     ("stop_point:A", "18:00"_t)
+                     ("stop_point:B", "18:30"_t)
+                     ("stop_point:C", "19:00"_t)
+                     ("stop_point:D", "19:30"_t);
+
         // Add company
         comp_name = "comp_name";
         comp_uri = "comp_uri";
@@ -2880,7 +2886,7 @@ BOOST_FIXTURE_TEST_CASE(add_new_trip, AddTripDataset) {
     b.data->build_raptor();
 
     // Check meta vj table
-    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 2);
+    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 3);
     BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.exists("vj:1"), true);
     auto* mvj = pt_data.meta_vjs.get_mut("vj:1");
     BOOST_CHECK_EQUAL(mvj->get_label(), "vj:1");
@@ -2895,8 +2901,8 @@ BOOST_FIXTURE_TEST_CASE(add_new_trip, AddTripDataset) {
     BOOST_CHECK_EQUAL(mvj->get_rt_vj().size(), 1);
 
     // Check vj table
-    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys_map.size(), 2);
-    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys.size(), 2);
+    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys_map.size(), 3);
+    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys.size(), 3);
 
     auto* vj = pt_data.vehicle_journeys_map["vj:1"];
     BOOST_CHECK_EQUAL(vj->uri, "vj:1");
@@ -2969,7 +2975,7 @@ BOOST_FIXTURE_TEST_CASE(add_new_trip, AddTripDataset) {
     b.data->build_raptor();
 
     //Check meta vj (there is no creation)
-    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 2);
+    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 3);
     BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.exists("vj:1"), true);
     mvj = pt_data.meta_vjs.get_mut("vj:1");
     BOOST_CHECK_EQUAL(mvj->get_label(), "vj:1");
@@ -2984,8 +2990,8 @@ BOOST_FIXTURE_TEST_CASE(add_new_trip, AddTripDataset) {
     BOOST_CHECK_EQUAL(mvj->get_rt_vj().size(), 1);
 
     // Check vj table
-    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys_map.size(), 2);
-    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys.size(), 2);
+    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys_map.size(), 3);
+    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys.size(), 3);
 
     // New trip added
     res = compute("20190101T073000", "stop_point:A", "stop_point:G");
@@ -3029,7 +3035,7 @@ BOOST_FIXTURE_TEST_CASE(add_new_trip, AddTripDataset) {
     b.data->build_raptor();
 
     // Check if meta vj exist
-    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 3);
+    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 4);
     mvj = pt_data.meta_vjs.get_mut("vj_new_trip_2");
     BOOST_CHECK_EQUAL(mvj->get_label(), "vj_new_trip_2");
     BOOST_CHECK_EQUAL(mvj->get_base_vj().size(), 0);
@@ -3037,8 +3043,8 @@ BOOST_FIXTURE_TEST_CASE(add_new_trip, AddTripDataset) {
     BOOST_CHECK_EQUAL(mvj->get_rt_vj().size(), 1);
 
     // Check vj table
-    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys_map.size(), 3);
-    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys.size(), 3);
+    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys_map.size(), 4);
+    BOOST_REQUIRE_EQUAL(pt_data.vehicle_journeys.size(), 4);
 
     // New VJ
     vj = pt_data.vehicle_journeys_map["vj_new_trip_2:modified:0:feed-2"];
@@ -3124,7 +3130,7 @@ BOOST_FIXTURE_TEST_CASE(flags_block_new_trip, AddTripDataset) {
     auto res = compute("20190101T073000", "stop_point:A", "stop_point:G");
     BOOST_CHECK_EQUAL(res.response_type(), pbnavitia::NO_SOLUTION);
     BOOST_CHECK_EQUAL(res.journeys_size(), 0);
-    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 1);
+    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 2);
     BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.exists("vj_new_trip"), false);
 
     // call function with is_realtime_add_enabled=false
@@ -3134,7 +3140,7 @@ BOOST_FIXTURE_TEST_CASE(flags_block_new_trip, AddTripDataset) {
     res = compute("20190101T073000", "stop_point:A", "stop_point:G");
     BOOST_CHECK_EQUAL(res.response_type(), pbnavitia::NO_SOLUTION);
     BOOST_CHECK_EQUAL(res.journeys_size(), 0);
-    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 1);
+    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 2);
     BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.exists("vj_new_trip"), false);
 
     // call function with is_realtime_add_trip_enabled=false
@@ -3144,7 +3150,7 @@ BOOST_FIXTURE_TEST_CASE(flags_block_new_trip, AddTripDataset) {
     res = compute("20190101T073000", "stop_point:A", "stop_point:G");
     BOOST_CHECK_EQUAL(res.response_type(), pbnavitia::NO_SOLUTION);
     BOOST_CHECK_EQUAL(res.journeys_size(), 0);
-    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 1);
+    BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.size(), 2);
     BOOST_REQUIRE_EQUAL(pt_data.meta_vjs.exists("vj_new_trip"), false);
 
 }

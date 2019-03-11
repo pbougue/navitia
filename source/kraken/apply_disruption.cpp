@@ -211,7 +211,9 @@ struct add_impacts_visitor : public apply_impacts_visitor {
             } else {
                 // Take the first route into the data (it is temporary).
                 // It'll replace by new method to create new default route.
-                r = pt_data.routes[0];
+                std::cout << "[TODO remove trace] number of routes=" << pt_data.routes.size() << std::endl;
+                r = pt_data.routes[pt_data.routes.size() - 1];
+//                r = pt_data.routes[0];
             }
             auto nb_rt_vj = mvj->get_rt_vj().size();
             std::string new_vj_uri = mvj->uri + ":modified:" + std::to_string(nb_rt_vj) + ":"
