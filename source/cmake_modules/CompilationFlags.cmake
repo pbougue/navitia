@@ -39,6 +39,8 @@ if(CCACHE AND CCACHE_PROGRAM)
   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
+option(USE_LLD "Use LLVM LLD linker" ON)
+
 # Clang Release flags
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     # it could be great to remove these warnings, but there is so much :
@@ -47,6 +49,11 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set(CMAKE_CLANG_COMMON_FLAGS "-std=c++14 -stdlib=libstdc++  -ferror-limit=10 -pthread -ftemplate-depth=1024")
     set(CMAKE_CXX_FLAGS "${CMAKE_CLANG_COMMON_FLAGS} ${CMAKE_CLANG_WARN_FLAGS}")
     set(CMAKE_C_FLAGS "-ferror-limit=10 -I/usr/local/include/c++/v1 -pthread")
+    if(USE_LLD)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld-6.0")
+        set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -fuse-ld=lld-6.0")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=lld-6.0")
+    endif()
 endif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 
 # Debug flags
