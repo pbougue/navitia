@@ -54,13 +54,14 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG=1 -fno-omit-frame-po
 
 set(NAVITIA_ALLOCATOR "tcmalloc")
 
-option(USE_SANATIZER "build with the desired sanitizer enabled. usual values: address, thread, leak, undefined" OFF)
-if(USE_SANATIZER)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=${USE_SANATIZER}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${USE_SANATIZER}")
-    #We can't use tcmalloc with address sanatizer
-    if(USE_SANATIZER STREQUAL "address")
+option(USE_SANITIZER "build with the desired sanitizer enabled. usual values: address, thread, leak, undefined" OFF)
+if(USE_SANITIZER)
+    message("Using sanitizer ${USE_SANITIZER}")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=${USE_SANITIZER} -fno-omit-frame-pointer")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${USE_SANITIZER} -fno-omit-frame-pointer")
+    #We can't use tcmalloc with address sanitizer
+    if(USE_SANITIZER STREQUAL "address")
         add_definitions("-DNO_FORCE_MEMORY_RELEASE")
         set(NAVITIA_ALLOCATOR "")
     endif()
-endif(USE_SANATIZER)
+endif(USE_SANITIZER)
