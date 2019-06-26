@@ -54,7 +54,6 @@ struct SpeedDistanceCombiner
 
 class DijkstraPathFinder : public PathFinder {
 public:
-
     DijkstraPathFinder(const GeoRef& geo_ref) : PathFinder(geo_ref) {}
 
     void start_distance_dijkstra(const navitia::time_duration& radius);
